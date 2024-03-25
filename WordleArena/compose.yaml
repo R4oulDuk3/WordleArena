@@ -1,0 +1,19 @@
+version: "3.5"
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks: [ "nats" ]
+    
+volumes:
+  pgdata:
+
+networks:
+  nats:
+    name: nats

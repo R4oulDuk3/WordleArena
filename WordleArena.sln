@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordleArena", "WordleArena\WordleArena.csproj", "{53DE3143-7043-480D-B03A-ED97F95BBAA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{95D45FEA-23D8-4F92-8084-B19ECC4D9776}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generate", "Generate\Generate.csproj", "{B45232DD-F761-47C0-9464-EBC57129DF28}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53DE3143-7043-480D-B03A-ED97F95BBAA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53DE3143-7043-480D-B03A-ED97F95BBAA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53DE3143-7043-480D-B03A-ED97F95BBAA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53DE3143-7043-480D-B03A-ED97F95BBAA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B45232DD-F761-47C0-9464-EBC57129DF28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B45232DD-F761-47C0-9464-EBC57129DF28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B45232DD-F761-47C0-9464-EBC57129DF28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B45232DD-F761-47C0-9464-EBC57129DF28}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{53DE3143-7043-480D-B03A-ED97F95BBAA7} = {95D45FEA-23D8-4F92-8084-B19ECC4D9776}
+		{B45232DD-F761-47C0-9464-EBC57129DF28} = {95D45FEA-23D8-4F92-8084-B19ECC4D9776}
+	EndGlobalSection
+EndGlobal
