@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using WordleArena.Api.Hubs;
 using WordleArena.Domain;
@@ -11,7 +11,7 @@ public class SendMessageToUsersHandler(ILogger<SendMessageToUsersHandler> logger
     IMediator mediator,
     IHubContext<GameHub> hubContext) : IRequestHandler<SendMessageToUsers>
 {
-    public async ValueTask<Unit> Handle(SendMessageToUsers request, CancellationToken cancellationToken)
+    public async Task Handle(SendMessageToUsers request, CancellationToken cancellationToken)
     {
         var userSessions = new List<UserSession>();
         foreach (var userId in request.UserIds.Where(uid => uid.IsHuman()))
@@ -21,7 +21,5 @@ public class SendMessageToUsersHandler(ILogger<SendMessageToUsersHandler> logger
 
         await hubContext.Clients.Clients(connectionIds.ToList())
             .SendAsync(request.Method, request.Message, cancellationToken);
-
-        return Unit.Value;
     }
 }

@@ -1,5 +1,5 @@
 using System.Text;
-using Mediator;
+using MediatR;
 using WordleArena.Domain.Commands;
 using WordleArena.Domain.Events.Game;
 using WordleArena.Domain.Queries;

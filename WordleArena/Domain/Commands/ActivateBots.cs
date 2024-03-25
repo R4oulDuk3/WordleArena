@@ -1,4 +1,6 @@
-using Mediator;
+// using MediatR;
+
+using MediatR;
 
 namespace WordleArena.Domain.Commands;
 

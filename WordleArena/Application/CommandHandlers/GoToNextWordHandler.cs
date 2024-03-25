@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using Polly;
 using WordleArena.Domain;
 using WordleArena.Domain.Commands;
@@ -7,7 +7,7 @@ namespace WordleArena.Application.CommandHandlers;
 
 public class GoToNextWordHandler(IGrainFactory factory) : IRequestHandler<GoToNextWord, GamePlayerState>
 {
-    public async ValueTask<GamePlayerState> Handle(GoToNextWord request, CancellationToken cancellationToken)
+    public async Task<GamePlayerState> Handle(GoToNextWord request, CancellationToken cancellationToken)
     {
         var retryPolicy = Policy
             .Handle<Exception>()

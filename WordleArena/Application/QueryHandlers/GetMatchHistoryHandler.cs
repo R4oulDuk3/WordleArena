@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WordleArena.Domain;
 using WordleArena.Domain.Queries;
@@ -8,7 +8,7 @@ namespace WordleArena.Application.QueryHandlers;
 
 public class GetMatchHistoryHandler(ArenaDbContext dbContext) : IRequestHandler<GetMatchHistory, MatchHistory>
 {
-    public async ValueTask<MatchHistory> Handle(GetMatchHistory request, CancellationToken cancellationToken)
+    public async Task<MatchHistory> Handle(GetMatchHistory request, CancellationToken cancellationToken)
     {
         var results = await dbContext.TempoGamePlayerResults.Where(r => r.UserId.Equals(request.UserId))
             .OrderByDescending(r => r.FinishedAt).Skip(request.Offset)

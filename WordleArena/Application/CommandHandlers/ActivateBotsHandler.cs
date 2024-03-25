@@ -1,5 +1,5 @@
 using LinqToDB;
-using Mediator;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WordleArena.Domain;
 using WordleArena.Domain.Commands;
@@ -9,7 +9,7 @@ namespace WordleArena.Application.CommandHandlers;
 
 public class ActivateBotsHandler(IGrainFactory factory, ArenaDbContext db) : IRequestHandler<ActivateBots, List<UserId>>
 {
-    public async ValueTask<List<UserId>> Handle(ActivateBots request, CancellationToken cancellationToken)
+    public async Task<List<UserId>> Handle(ActivateBots request, CancellationToken cancellationToken)
     {
         List<Bot> availableBots;
         await using (var transaction = await db.Database.BeginTransactionAsync(cancellationToken))

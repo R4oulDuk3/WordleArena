@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using WordleArena.Domain.Commands;
 using WordleArena.Domain.Events.UserSession;
 using WordleArena.Domain.Queries;
@@ -21,11 +21,6 @@ public class MatchmakingGrain(IGrainFactory grainFactory, IMediator mediator, IL
             tickPeriod);
         logger.LogInformation("Initialized Matchmaking loop");
         return Task.CompletedTask;
-    }
-    
-    private async Task TickHandler(object arg)
-    {
-        await this.AsReference<IMatchmakingGrain>().MatchPlayers(arg);
     }
 
 
@@ -57,6 +52,11 @@ public class MatchmakingGrain(IGrainFactory grainFactory, IMediator mediator, IL
                     foreach (var userId in group) await mediator.Publish(new UserJoinedGame(userId, gameId, type));
                 }
             }
+    }
+
+    private async Task TickHandler(object arg)
+    {
+        await this.AsReference<IMatchmakingGrain>().MatchPlayers(arg);
     }
 
     public override Task OnDeactivateAsync(DeactivationReason reason,

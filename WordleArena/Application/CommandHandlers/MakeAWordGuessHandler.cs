@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using Polly;
 using WordleArena.Domain;
 using WordleArena.Domain.Commands;
@@ -10,7 +10,7 @@ public class MakeAWordGuessHandler(IGrainFactory factory) : IRequestHandler<Make
     GamePlayerState
     currentPlayerState)>
 {
-    public async ValueTask<(GameEvent eventOccured, GamePlayerState currentPlayerState)> Handle(MakeAWordGuess request,
+    public async Task<(GameEvent eventOccured, GamePlayerState currentPlayerState)> Handle(MakeAWordGuess request,
         CancellationToken cancellationToken)
     {
         var retryPolicy = Policy

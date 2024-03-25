@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using WordleArena.Domain;
 using WordleArena.Domain.Commands;
 using WordleArena.Domain.Events.UserSession;
@@ -10,7 +10,7 @@ public class UserDisconnectedHandler
 (ILogger<UserConnectedHandler> logger, IMediator mediator, IGrainFactory factory,
     IGrainFactory clusterClient) : INotificationHandler<UserDisconnected>
 {
-    public async ValueTask Handle(UserDisconnected userDisconnectedEvent, CancellationToken cancellationToken)
+    public async Task Handle(UserDisconnected userDisconnectedEvent, CancellationToken cancellationToken)
     {
         var connectedUsersCountGrain = clusterClient.GetGrain<IConnectedUsersCountGrain>(Guid.Empty);
         await connectedUsersCountGrain.Handle(userDisconnectedEvent);

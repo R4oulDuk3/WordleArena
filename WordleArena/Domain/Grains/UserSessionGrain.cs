@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using Orleans.EventSourcing;
 using WordleArena.Domain.Commands;
 using WordleArena.Domain.Events.UserSession;

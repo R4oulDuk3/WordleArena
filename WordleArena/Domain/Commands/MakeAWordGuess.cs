@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using WordleArena.Domain.Events.Game;
 
 namespace WordleArena.Domain.Commands;

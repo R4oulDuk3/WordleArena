@@ -1,5 +1,5 @@
 using LinqToDB.EntityFrameworkCore;
-using Mediator;
+using MediatR;
 using WordleArena.Domain;
 using WordleArena.Domain.Queries;
 using WordleArena.Infrastructure;
@@ -9,7 +9,7 @@ namespace WordleArena.Application.QueryHandlers;
 public class GetWordWithNoDefinitionQuery
     (ArenaDbContext context) : IRequestHandler<GetWordWithNoDefinition, List<WordleWord>>
 {
-    public async ValueTask<List<WordleWord>> Handle(GetWordWithNoDefinition request,
+    public async Task<List<WordleWord>> Handle(GetWordWithNoDefinition request,
         CancellationToken cancellationToken)
     {
         var query = from word in context.WordleWords

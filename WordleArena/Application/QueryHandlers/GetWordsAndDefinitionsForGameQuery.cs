@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using WordleArena.Domain;
 using WordleArena.Domain.Queries;
@@ -9,7 +9,7 @@ namespace WordleArena.Application.QueryHandlers;
 public class GetWordsAndDefinitionsForGameQuery(ArenaDbContext context)
     : IRequestHandler<GetWordsAndDefinitionsForGame, List<(WordleWord, WordDefinition)>>
 {
-    public async ValueTask<List<(WordleWord, WordDefinition)>> Handle(GetWordsAndDefinitionsForGame request,
+    public async Task<List<(WordleWord, WordDefinition)>> Handle(GetWordsAndDefinitionsForGame request,
         CancellationToken cancellationToken)
     {
         var queryResult = await (

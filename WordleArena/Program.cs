@@ -21,6 +21,11 @@ builder.Host.UseOrleans(siloBuilder =>
         options.Invariant = "Npgsql";
         options.ConnectionString = builder.Configuration.GetConnectionString("ArenaOrleans");
     });
+    siloBuilder.ConfigureServices(services =>
+    {
+        services.ConfigureServices(builder.Configuration);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+    });
     siloBuilder.AddLogStorageBasedLogConsistencyProvider().AddMemoryGrainStorageAsDefault();
     siloBuilder.AddStartupTask(async (services, cancellation) =>
     {
@@ -38,7 +43,6 @@ builder.Host.UseOrleans(siloBuilder =>
         await wordGeneratorGrain.Start();
     });
 });
-builder.Services.ConfigureServices(builder.Configuration);
 
 
 var app = builder.Build();

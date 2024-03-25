@@ -1,19 +1,18 @@
-using Mediator;
-using Polly;
+using MediatR;
 using WordleArena.Domain;
 using WordleArena.Domain.Commands;
 
 namespace WordleArena.Application.CommandHandlers;
 
-public class SignalizeReadinessHandler(IGrainFactory factory) : IRequestHandler<SignalizeReadiness,SignalizeReadinessResponse>
+public class SignalizeReadinessHandler
+    (IGrainFactory factory) : IRequestHandler<SignalizeReadiness, SignalizeReadinessResponse>
 {
-    public async ValueTask<SignalizeReadinessResponse> Handle(SignalizeReadiness request, CancellationToken cancellationToken)
+    public async Task<SignalizeReadinessResponse> Handle(SignalizeReadiness request,
+        CancellationToken cancellationToken)
     {
         var grain = factory.GetGameGrain(request.GameId, request.GameType);
 
 
-
-        return await grain.HandlePlayerReady(request.UserId); 
-
+        return await grain.HandlePlayerReady(request.UserId);
     }
 }

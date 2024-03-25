@@ -1,5 +1,5 @@
 using LinqToDB.EntityFrameworkCore;
-using Mediator;
+using MediatR;
 using WordleArena.Domain;
 using WordleArena.Domain.Queries;
 using WordleArena.Infrastructure;
@@ -8,7 +8,7 @@ namespace WordleArena.Application.QueryHandlers;
 
 public class GetPlayersInfoHandler(ArenaDbContext context) : IRequestHandler<GetPlayersInfo, List<PlayerInfo>>
 {
-    public async ValueTask<List<PlayerInfo>> Handle(GetPlayersInfo request, CancellationToken cancellationToken)
+    public async Task<List<PlayerInfo>> Handle(GetPlayersInfo request, CancellationToken cancellationToken)
     {
         var playersIds = request.UserIds.Where(id => id.IsHuman()).ToList();
         var botIds = request.UserIds.Where(id => id.IsBot()).ToList();

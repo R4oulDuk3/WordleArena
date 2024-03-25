@@ -51,9 +51,8 @@ public static class Setup
 
         SetUpEdgeServices(services);
         SetupArenaServices(services);
-        // services.AddScoped(typeof(IRequestHandler<InitializeUser, GameUser>), typeof(InitializeUserHandler));
 
-        services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
+        // services.AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Transient; });
 
 
         return services;

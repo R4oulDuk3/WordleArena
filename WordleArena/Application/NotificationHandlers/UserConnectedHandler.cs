@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using WordleArena.Domain.Events.UserSession;
 using WordleArena.Domain.Grains;
 
@@ -7,7 +7,7 @@ namespace WordleArena.Application.NotificationHandlers;
 public class UserConnectedHandler
     (ILogger<UserConnectedHandler> logger, IGrainFactory clusterClient) : INotificationHandler<UserConnected>
 {
-    public async ValueTask Handle(UserConnected userConnectedEvent, CancellationToken cancellationToken)
+    public async Task Handle(UserConnected userConnectedEvent, CancellationToken cancellationToken)
     {
         var userSessionGrain = clusterClient.GetGrain<IUserSessionGrain>(userConnectedEvent.UserId.Id);
         await userSessionGrain.Handle(userConnectedEvent);

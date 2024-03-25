@@ -1,6 +1,5 @@
-using Mediator;
+using MediatR;
 using WordleArena.Domain.Commands;
-using WordleArena.Domain.Events;
 using WordleArena.Domain.Events.UserSession;
 
 namespace WordleArena.Domain.Grains;

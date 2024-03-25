@@ -1,4 +1,4 @@
-using Mediator;
+using MediatR;
 using TypeGen.Core.TypeAnnotations;
 using WordleArena.Domain.Commands;
 using WordleArena.Domain.Events.UserSession;
