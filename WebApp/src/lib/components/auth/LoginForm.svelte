@@ -34,24 +34,24 @@
         <p>Hope you are ready for a challenge</p>
     </header>
     <section class="p-4 flex flex-col justify-center items-center">
-        <form action="flex-col items-center justify-center w-full">
-            <label class="label">
-                <span>Email</span>
-                <input class="input w-full my-2" placeholder="Email" type="text"/>
-            </label>
+        <!--        <form action="flex-col items-center justify-center w-full">-->
+        <!--            <label class="label">-->
+        <!--                <span>Email</span>-->
+        <!--                <input class="input w-full my-2" placeholder="Email" type="text"/>-->
+        <!--            </label>-->
 
-            <label class="label">
-                <span>Password</span>
-                <input class="input w-full my-2" placeholder="Password" type="text"/>
-            </label>
+        <!--            <label class="label">-->
+        <!--                <span>Password</span>-->
+        <!--                <input class="input w-full my-2" placeholder="Password" type="text"/>-->
+        <!--            </label>-->
 
-            <div class="flex items-center my-3">
-                <div class="flex-grow border-t border-gray-300"></div>
-                <span class="flex-shrink mx-4 text-gray-500">OR</span>
-                <div class="flex-grow border-t border-gray-300"></div>
-            </div>
+        <!--            <div class="flex items-center my-3">-->
+        <!--                <div class="flex-grow border-t border-gray-300"></div>-->
+        <!--                <span class="flex-shrink mx-4 text-gray-500">OR</span>-->
+        <!--                <div class="flex-grow border-t border-gray-300"></div>-->
+        <!--            </div>-->
 
-        </form>
+        <!--        </form>-->
 
         <button class="btn variant-filled w-full mb-3" on:click={handleAnonymousSignIn} type="button">
             <span>Join as a Guest</span>

@@ -24,8 +24,8 @@ services:
 
   webapp:
     build:
-      context: .
-      dockerfile: ./WebApp/Dockerfile
+      context: ./WebApp
+      dockerfile: ./Dockerfile
     ports:
       - "3000:3000"
     networks: [ "arena" ]
