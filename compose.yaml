@@ -1,0 +1,38 @@
+version: "3.5"
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks: [ "arena" ]
+  wordle-arena:
+    environment:
+      ConnectionStrings__ArenaDB: Host=postgres;Database=arena;Username=postgres;Password=password;Command Timeout=250
+      ConnectionStrings__ArenaOrleans: Host=postgres;Database=arena;Username=postgres;Password=password;Command Timeout=250
+      ASPNETCORE_HTTP_PORTS: 80
+    build:
+      context: .
+      dockerfile: ./WordleArena/Dockerfile
+    ports:
+      - "80:80"
+    networks: [ "arena" ]
+
+  webapp:
+    build:
+      context: .
+      dockerfile: ./WebApp/Dockerfile
+    ports:
+      - "3000:3000"
+    networks: [ "arena" ]
+
+volumes:
+  pgdata:
+
+networks:
+  arena:
+    name: arena

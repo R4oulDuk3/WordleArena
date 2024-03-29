@@ -9,6 +9,7 @@ export class GameClient {
     connection: signalR.HubConnection;
 
     constructor(JTWCredentials: string, endpoint: string) {
+        console.log("Connection to endpoint", endpoint)
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(endpoint,
                 {accessTokenFactory: () => JTWCredentials}

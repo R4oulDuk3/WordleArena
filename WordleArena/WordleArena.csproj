@@ -27,6 +27,7 @@
         <PackageReference Include="Microsoft.Orleans.Client" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Orleans.Clustering.AdoNet" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Orleans.EventSourcing" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Orleans.Hosting.Kubernetes" Version="8.0.0" />
         <PackageReference Include="Microsoft.Orleans.Persistence.AdoNet" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Orleans.Sdk" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Orleans.Server" Version="8.0.0"/>

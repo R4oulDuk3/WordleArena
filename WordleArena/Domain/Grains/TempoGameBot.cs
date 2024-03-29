@@ -11,6 +11,8 @@ public class TempoGameBotGrain
         Grain<TempoGameBotState>,
         IBotGrain
 {
+    private const int GenerateGuessLow = -1;
+    private const int GenerateGuessHigh = 4;
     private readonly TimeSpan minPeriodBetweenGuesses = TimeSpan.FromMilliseconds(2000);
     private readonly TimeSpan tickPeriod = TimeSpan.FromMilliseconds(1000);
     private IDisposable timer;
@@ -67,18 +69,18 @@ public class TempoGameBotGrain
 
     public Task<Guess> GenerateGuess(WordleWord word)
     {
-        // logger.LogInformation("Bot {id} generating guess for word {word}", State.UserId, word.TargetWord);
+        var appliedEffects = State.SharedPlayerState?.PlayerAppliedEffectStates
+            .First(s => s.UserId.Equals(State.UserId))
+            .EffectTypes ?? new HashSet<EffectType>();
+
+
         if (State.PlayerState == null) throw new Exception("Can not make a guess, if player state is null");
 
         var lastGuessResult =
             State.PlayerState.CurrentWordGuessResults.LastOrDefault(GuessResult.NewPlaceholderGuessResult(word));
 
-        // var mostLikelyNumberOfGuessedLetters = word.WordLenght - lastGuessResult.GetCorrectLetterPlacements() / 4;
-        var numberOfLettersToBeGuessSuccessfully = new Random(DateTime.UtcNow.Microsecond).Next(-2, 3);
-        numberOfLettersToBeGuessSuccessfully =
-            numberOfLettersToBeGuessSuccessfully > 0 ? numberOfLettersToBeGuessSuccessfully : 0;
-        // generator.GetWeightedRandomNumber(word.WordLenght, 3);
-        // logger.LogInformation("Bot {id} will guess {cnt} new letters for {word}", State.UserId, numberOfLettersToBeGuessSuccessfully, word.TargetWord);
+        var numberOfLettersToBeGuessSuccessfully = CalculateHowManyLetterToGuessSuccesfully(appliedEffects);
+
 
         var guessWord = new string('*', word.WordLenght);
         var guessWordBuilder = new StringBuilder(guessWord);
@@ -93,7 +95,6 @@ public class TempoGameBotGrain
             guessWordBuilder[position] = word.TargetWord[position];
 
         var guess = new Guess(guessWordBuilder.ToString());
-        // logger.LogInformation("Bot {id} generated guess for word {word}: {guess}", State.UserId, word.TargetWord, guess);
 
         return Task.FromResult(guess);
     }
@@ -132,12 +133,19 @@ public class TempoGameBotGrain
             if (DateTime.UtcNow.Subtract(State.LastGuessTime).CompareTo(minPeriodBetweenGuesses) <= 0) return;
 
             State.CurrentWord ??= await GetCurrentWord();
+            if (State.FirstWordReceivedFrequency == 0) State.FirstWordReceivedFrequency = State.CurrentWord.Frequency;
 
-            var guess = await GenerateGuess(State.CurrentWord);
-            var (gameEvent, playerState) = await MakeAWordGuess(State.GameId, guess);
-            State.LastGuessTime = DateTime.UtcNow;
-            State.PlayerState = (TempoGamePlayerState)playerState;
-            await HandleGameEvent((TempoGameEvent)gameEvent);
+            var appliedEffects =
+                State.SharedPlayerState.PlayerAppliedEffectStates.First(s => s.UserId.Equals(State.UserId)).EffectTypes;
+            if (!appliedEffects.Contains(EffectType.Freeze))
+            {
+                var guess = await GenerateGuess(State.CurrentWord);
+                var (gameEvent, playerState) = await MakeAWordGuess(State.GameId, guess);
+                State.LastGuessTime = DateTime.UtcNow;
+                State.PlayerState = (TempoGamePlayerState)playerState;
+                await HandleGameEvent((TempoGameEvent)gameEvent);
+                TryInvokeEffects();
+            }
         }
         catch (Exception e)
         {
@@ -148,6 +156,57 @@ public class TempoGameBotGrain
         finally
         {
             await WriteStateAsync();
+        }
+    }
+
+    private int CalculateHowManyLetterToGuessSuccesfully(HashSet<EffectType> appliedEffects)
+    {
+        var lowEndModifier = 0;
+
+        lowEndModifier -= (int)((State.FirstWordReceivedFrequency - State.CurrentWord.Frequency) * 1.0 /
+                                State.FirstWordReceivedFrequency) * 4;
+        if (appliedEffects.Contains(EffectType.KeyboardHints)) lowEndModifier = Math.Max(lowEndModifier, 1);
+        var numberOfLettersToBeGuessSuccessfully =
+            new Random(DateTime.UtcNow.Microsecond).Next(GenerateGuessLow + lowEndModifier, GenerateGuessHigh);
+        numberOfLettersToBeGuessSuccessfully =
+            numberOfLettersToBeGuessSuccessfully > 0 ? numberOfLettersToBeGuessSuccessfully : 0;
+        return numberOfLettersToBeGuessSuccessfully;
+    }
+
+    public async Task TryInvokeEffects()
+    {
+        if (State.PlayerState is { TempoGauge: >= TempoGameGrain.EffectTempoCost })
+        {
+            var random = new Random(DateTime.UtcNow.Microsecond);
+            var effectsAppliedOnBot =
+                State.SharedPlayerState?.PlayerAppliedEffectStates.First(s => s.UserId.Equals(State.UserId))
+                    .EffectTypes ?? new HashSet<EffectType>();
+            var possibleEffectsToApply = Enum.GetValues(typeof(EffectType)).Cast<EffectType>().ToList();
+            foreach (var effectType in effectsAppliedOnBot) possibleEffectsToApply.Remove(effectType);
+
+            var chosenEffect = possibleEffectsToApply[random.Next(possibleEffectsToApply.Count)];
+            switch (chosenEffect)
+            {
+                case EffectType.Freeze:
+                    var highestScorePlayer =
+                        State.SharedPlayerState.PlayerScores.OrderByDescending(ps => ps.Score).ToList()[0];
+                    await mediator.Send(
+                        new ApplyEffect(State.UserId, new Effect(highestScorePlayer.UserId, EffectType.Freeze),
+                            GameType.Tempo, State.GameId));
+                    break;
+                case EffectType.Reflect:
+                    await mediator.Send(
+                        new ApplyEffect(State.UserId, new Effect(State.UserId, EffectType.Freeze), GameType.Tempo,
+                            State.GameId));
+                    break;
+                case EffectType.KeyboardHints:
+                    await mediator.Send(
+                        new ApplyEffect(State.UserId, new Effect(State.UserId, EffectType.KeyboardHints),
+                            GameType.Tempo, State.GameId));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 

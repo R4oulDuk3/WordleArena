@@ -53,7 +53,8 @@
         type: 'confirm',
         title: '',
         body: 'Are you sure you want to leave the game?',
-        response: (r: boolean) => {
+        response: async (r: boolean) => {
+            await cleanup()
             if (r) routeToMainMenu()
         }
     };
@@ -83,7 +84,7 @@
     let reflectApplied = false
     let enoughTempoForAbility = false
     let keyboardHints: string[] = []
-    let effectTempoCost = 50;
+    let effectTempoCost = 100;
     let eliminatedPlayers: UserId[] = []
     let getGameStatusStub: any
 
@@ -113,7 +114,7 @@
             if (status == GameStatus.NotInitialized) {
                 routeToMainMenu()
             }
-        }, 500);
+        }, 1500);
     }
 
 
@@ -146,7 +147,7 @@
         enoughTempoForAbility = tempoGauge >= effectTempoCost
     })
 
-    onDestroy(async () => {
+    async function cleanup() {
         try {
             clearInterval(getGameStatusStub)
             let client = await getGameClient()
@@ -156,6 +157,10 @@
         } catch (e) {
             console.error("Error on destroy", e)
         }
+    }
+
+    onDestroy(async () => {
+        await cleanup();
     });
 
     $: sharedStateStore.subscribe(async state => {

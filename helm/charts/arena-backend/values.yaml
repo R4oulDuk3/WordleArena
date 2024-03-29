@@ -1,0 +1,37 @@
+---
+global:
+  fullNameOverride: "arena-backend"
+  environment: "prod"
+
+image:
+  url: europe-central2-docker.pkg.dev/wordle-arena-418422/main/backend
+  tag: master-3
+  pullPolicy: Always
+
+replicaCount: 2
+
+gcpServiceAccount: wordle-arena@wordle-arena-418422.iam.gserviceaccount.com
+
+cloudSQL:
+  image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.2
+  enabled: true
+  connectionName: wordle-arena-418422:europe-central2:arena-db
+
+pdb:
+  enabled: false
+  minAvailable: 1
+
+resources:
+  requests:
+    cpu: 0.1
+    memory: 512Mi
+  limits:
+    memory: 1Gi
+
+environment:
+  port: 8080
+  db:
+    host: 127.0.0.1
+  orleans:
+    clusterId: "{{ .Release.Name }}-battle"
+    serviceId: "battle"

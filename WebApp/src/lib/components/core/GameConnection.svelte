@@ -4,13 +4,15 @@
     import type {User} from "firebase/auth";
     import {ProgressRadial} from '@skeletonlabs/skeleton';
     import {GameClient, gameClientStore} from '$lib/clients/gameclient'; // Assuming this is the correct path
+    import {dev} from '$app/environment';
 
     let checkConnectionInterval: ReturnType<typeof setInterval> | null = null;
     let isCheckingConnection = false;
-    const hubUrl: string = 'http://localhost:5220/signalr';
+    const hubUrl: string = dev ? 'http://localhost:80/signalr' : 'http://localhost:80/signalr';
     let isLoggedIn = false
     let isConnectingFlag = false;
     let gameClient: GameClient | null = null;
+
 
     // Function to set the connecting status
     const setConnecting = (value: boolean): void => {
@@ -60,7 +62,7 @@
 
         try {
             if (user) {
-                
+
                 await connectGameClient(user);
             } else {
                 console.log("No user detected. Disconnecting GameClient if exists...");

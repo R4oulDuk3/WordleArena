@@ -1,3 +1,4 @@
+using Orleans.Hosting.Kubernetes;
 using WordleArena;
 using WordleArena.Domain;
 using WordleArena.Domain.Grains;
@@ -9,6 +10,12 @@ builder.Host.UseOrleans(siloBuilder =>
 {
     siloBuilder.UseDashboard();
     siloBuilder.UseLocalhostClustering();
+    var podIp = Environment.GetEnvironmentVariable(KubernetesHostingOptions.PodIPEnvironmentVariable);
+    if (!string.IsNullOrEmpty(podIp))
+    {
+        // running in k8s pod
+        siloBuilder.UseKubernetesHosting();
+    }
     siloBuilder.UseAdoNetClustering(options =>
     {
         options.Invariant = "Npgsql";

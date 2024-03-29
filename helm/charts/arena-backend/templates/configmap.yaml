@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: {{ include "common.name" . }}-configuration
+  labels:
+  {{ include "common.labelsApp" . | nindent 4 }}
+data:
+  appsettings.json: |
+    {
+        "Logging": {
+          "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning",
+            "Microsoft.Entity": "Warning",
+            "Microsoft.AspNetCore.SignalR": "Debug",
+            "Microsoft.AspNetCore.Http.Connections": "Debug"
+          }
+      },
+        "AllowedHosts": "*",
+        "ConnectionStrings": {
+          "ArenaDB": "Host={{ .Values.environment.db.host }};Database=arena;Username=arena;Password=arena;Command Timeout=250",
+          "ArenaOrleans": "Host={{ .Values.environment.db.host }};Database=arena;Username=arena;Password=arena;Command Timeout=250"
+        }
+    }

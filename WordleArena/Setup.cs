@@ -22,17 +22,7 @@ public static class Setup
         IConfiguration configuration)
     {
         SetUpInfrastructureServices(services, configuration);
-
-        // CreateOrleansGrainStorage(configuration);
-
-        //
-        // FirebaseApp.Create(new AppOptions()
-        // {
-        //     Credential = GoogleCredential.GetApplicationDefault(),
-        //     ProjectId = "worlde-arena",
-        // });
-        //
-
+        
         services.AddSignalR();
         services.AddControllers();
 
@@ -182,7 +172,11 @@ public static class Setup
         Debug.Assert(context != null, nameof(context) + " != null");
         context.Database.Migrate();
 
-        app.UseCors("CorsPolicy");
+        app.UseCors(x => x
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(origin => true) // allow any origin
+            .AllowCredentials());
         app.UseRouting();
 
         // If you are using authentication and authorization, add these as well

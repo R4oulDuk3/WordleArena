@@ -1,0 +1,22 @@
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "common.name" . }}-hosting
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "watch", "list", "delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "common.name" . }}-hosting-binding
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "common.name" . }}
+    apiGroup: ""
+roleRef:
+  kind: Role
+  name: {{ include "common.name" . }}-hosting
+  apiGroup: ""

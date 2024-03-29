@@ -1,0 +1,11 @@
+apiVersion: v2
+name: arena-backend
+description: Chart for deploying Wordle Arena frontend server
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: common
+    repository: "file://../common"
+    version: 0.1.0
+

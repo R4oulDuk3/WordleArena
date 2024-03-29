@@ -17,4 +17,5 @@ public class TempoGameBotState : BotState
     [Id(3)] public TempoGameSharedPlayerState? SharedPlayerState { get; set; }
 
     [Id(8)] public bool HasSignalizedReadiness { get; set; }
+    [Id(9)] public int FirstWordReceivedFrequency { get; set; } = 0;
 }

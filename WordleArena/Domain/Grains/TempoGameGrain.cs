@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MediatR;
 using WordleArena.Domain.Commands;
 using WordleArena.Domain.Events.Game;
@@ -21,7 +22,7 @@ public class TempoGameGrain(IMediator mediator, ILogger<TempoGameGrain> logger) 
     private const int KeyboardHintsExtraLetters = 8;
     private const int KeyboardHintsReduce = 2;
     private const int EliminationIncrement = 20;
-    private const int EffectTempoCost = 50;
+    public const int EffectTempoCost = 100;
     private static readonly TimeSpan FailAfter = TimeSpan.FromSeconds(30);
     private static readonly TimeSpan EndAfter = TimeSpan.FromMinutes(1);
     private static readonly TimeSpan WaitBeforeGameBegins = TimeSpan.FromSeconds(5);
@@ -46,7 +47,7 @@ public class TempoGameGrain(IMediator mediator, ILogger<TempoGameGrain> logger) 
             2000000000,
             0,
             5,
-            1000));
+            120));
         var wordsWithDefinitions = new List<(WordleWord, WordDefinition)>();
         // wordsWithDefinitions.AddRange(wordsWithDefinitionsEasy);
         wordsWithDefinitions.AddRange(wordsWithDefinitionsMedium);
@@ -71,19 +72,6 @@ public class TempoGameGrain(IMediator mediator, ILogger<TempoGameGrain> logger) 
         logger.LogInformation("Ending the game! [GameType: {type}, GameId: {gameId}]",
             GameType.Tempo, State.GameId.Id);
         State.SharedPlayerState.PlayerScores.Sort((ps1, ps2) => ps1.Score < ps2.Score ? -1 : 1);
-        // var place = 1;
-        // foreach (var score in State.SharedPlayerState.PlayerScores)
-        // {
-        //     if (place == 1)
-        //         await SendGameEvent(
-        //             new TempoGameEvent(score.UserId, TempoGameEventType.GameOverWon, "1st Place!\n Good job!"),
-        //             score.UserId);
-        //     else
-        //         await SendGameEvent(
-        //             new TempoGameEvent(score.UserId, TempoGameEventType.GameOverLost,
-        //                 $"{place}st Place!\n You'll get them next time!"), score.UserId);
-        //     place++;
-        // }
 
         DeactivateOnIdle();
     }
@@ -238,6 +226,7 @@ public class TempoGameGrain(IMediator mediator, ILogger<TempoGameGrain> logger) 
 
     public async Task Tick(object o)
     {
+        var stopwatch = Stopwatch.StartNew();
         try
         {
             if (await TryPrepareGame(logger)) return;
@@ -273,7 +262,10 @@ public class TempoGameGrain(IMediator mediator, ILogger<TempoGameGrain> logger) 
         {
             try
             {
+                var writeStopWatch = Stopwatch.StartNew();
                 await WriteStateAsync();
+                writeStopWatch.Stop();
+                logger.LogInformation($"Executed WriteStateAsync in {writeStopWatch.ElapsedMilliseconds} milliseconds");
                 if (!State.SharedPlayerState.GameIsOver) BroadcastSharedPlayerState();
             }
             catch (Exception e)
@@ -282,6 +274,9 @@ public class TempoGameGrain(IMediator mediator, ILogger<TempoGameGrain> logger) 
                     "An exception occured during broadcasting shared state [GameType: {type}, GameId: {gameId}]",
                     GameType.Tempo, State.GameId.Id);
             }
+
+            stopwatch.Stop();
+            logger.LogInformation($"Executed game tick in {stopwatch.ElapsedMilliseconds} milliseconds");
         }
     }
 
